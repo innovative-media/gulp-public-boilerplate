@@ -16,8 +16,7 @@ gulp.task('compass', function() {
 
 gulp.task('scripts-modern', function() {
 	return gulp.src([
-			'bower_components/jquery/dist/jquery.js'
-			, 'bower_components/jquery-placeholder/jquery.placeholder.js'
+			'bower_components/jquery-placeholder/jquery.placeholder.js'
 			, 'bower_components/fastclick/lib/fastclick.js'
 			, 'bower_components/jquery.cookie/jquery.cookie.js'
 			, 'bower_components/foundation/js/foundation.js'
@@ -29,6 +28,35 @@ gulp.task('scripts-modern', function() {
 		.pipe(plugins.rename({ basename: 'app', suffix: '.min'}))
 		.pipe(plugins.uglify())
 		.pipe(gulp.dest('../public/js'))
+});
+
+gulp.task('scripts-legacy', function() {
+	return gulp.src([
+			'js/ie8/*.js', // ie8 Polyfills
+			'!js/ie8/rem.min.js'
+		])
+		.pipe(plugins.concat('legacy.min.js', {newLine: ';'}))
+		.pipe(plugins.uglify())
+		.pipe(gulp.dest('../public/js'))
+});
+
+gulp.task('copy-modernizr', function(){
+	return gulp.src('bower_components/modernizr/modernizr.js', 'bower_components/jquery-legacy/dist/jquery.js')
+		.pipe(plugins.uglify())
+		.pipe(plugins.rename({ suffix: '.min'}))
+		.pipe(gulp.dest('../public/js'));
+});
+
+gulp.task('copy-jquery-legacy', function(){
+	return gulp.src('bower_components/jquery-legacy/dist/jquery.js')
+		.pipe(plugins.uglify())
+	  	.pipe(plugins.rename({ basename: 'jquery-legacy', suffix: '.min'}))
+		.pipe(gulp.dest('../public/js'));
+});
+
+gulp.task('copy-rem-polyfil', function(){
+	return gulp.src('js/ie8/rem.min.js')
+		.pipe(gulp.dest('../public/js'));
 });
 
 gulp.task('images', function() {
@@ -92,7 +120,15 @@ if(benchPackage) {
 
 
 
-gulp.task('default', ['watch', 'compass', 'scripts-modern', 'images'], function(){
+gulp.task('default', [
+		'watch'
+		, 'compass'
+		, 'scripts-modern'
+		, 'scripts-legacy'
+		, 'copy-modernizr'
+		, 'copy-jquery-legacy'
+		, 'copy-rem-polyfil'
+		, 'images'], function(){
 	(benchPackage) ? gulp.start(['publish']) : '';
 });
 
