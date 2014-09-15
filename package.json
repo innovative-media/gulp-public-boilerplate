@@ -17,6 +17,7 @@
     "jshint-stylish": "~0.4.0",
     "gulp-sourcemaps": "~1.1.4",
     "gulp-shell": "~0.2.9",
-    "run-sequence": "~0.3.6"
+    "run-sequence": "~0.3.6",
+    "gulp-pixrem": "~0.1.1"
   }
 }

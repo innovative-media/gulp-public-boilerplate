@@ -14,12 +14,20 @@ gulp.task('compass', function() {
 	.pipe(gulp.dest('../public/css'));
 });
 
+gulp.task('pixrem', function() {
+	gulp.src('../public/css/app.css')
+		.pipe(plugins.pixrem())
+		.pipe(plugins.rename({ basename: 'ie8' }))
+		.pipe(gulp.dest('../public/css'));
+});
+
 gulp.task('scripts-modern', function() {
 	return gulp.src([
 			'bower_components/jquery-placeholder/jquery.placeholder.js'
 			, 'bower_components/fastclick/lib/fastclick.js'
 			, 'bower_components/jquery.cookie/jquery.cookie.js'
 			, 'bower_components/foundation/js/foundation.js'
+			, 'bower_components/jquery-easing-original/jquery.easing.1.3.js'
 			, 'js/app.js'
 		])
 		// .pipe(plugins.jshint())
@@ -32,15 +40,18 @@ gulp.task('scripts-modern', function() {
 
 gulp.task('scripts-legacy', function() {
 	return gulp.src([
-			'js/ie8/*.js', // ie8 Polyfills
-			'!js/ie8/rem.min.js'
+			'bower_components/html5shiv/dist/html5shiv.js'
+			, 'bower_components/es5-shim/es5-shim.js'
+			, 'js/ie8/nwmatcher-1.2.5-min.js'
+			, 'bower_componenets/selectivizr/selectivizr.js'
+			, 'bower_components/respond/dest/respond.min.js'
 		])
 		.pipe(plugins.concat('legacy.min.js', {newLine: ';'}))
 		.pipe(plugins.uglify())
 		.pipe(gulp.dest('../public/js'))
 });
 
-gulp.task('copy-modernizr', function(){
+gulp.task('copy', function(){
 	return gulp.src('bower_components/modernizr/modernizr.js', 'bower_components/jquery-legacy/dist/jquery.js')
 		.pipe(plugins.uglify())
 		.pipe(plugins.rename({ suffix: '.min'}))
@@ -54,8 +65,8 @@ gulp.task('copy-jquery-legacy', function(){
 		.pipe(gulp.dest('../public/js'));
 });
 
-gulp.task('copy-rem-polyfil', function(){
-	return gulp.src('js/ie8/rem.min.js')
+gulp.task('copy-rem-polyfill', function(){
+	return gulp.src('bower_components/rem-unit-polyfill/js/rem.min.js')
 		.pipe(gulp.dest('../public/js'));
 });
 
@@ -96,6 +107,9 @@ if(benchPackage) {
 		// Watch .scss files
 		gulp.watch('scss/**/*.scss', ['watch-compass']);
 
+		// Watch public .css files (pixrem for IE8)
+		gulp.watch('../public/css/app.css', ['pixrem']);
+
 		// Watch .js files
 		gulp.watch('js/**/*.js', ['watch-scripts-modern']);
 
@@ -108,6 +122,9 @@ if(benchPackage) {
 
 		// Watch .scss files
 		gulp.watch('scss/**/*.scss', ['compass']);
+
+		// Watch public .css files (pixrem for IE8)
+		gulp.watch('../public/css/app.css', ['pixrem']);
 
 		// Watch .js files
 		gulp.watch('js/**/*.js', ['scripts-modern']);
@@ -125,9 +142,9 @@ gulp.task('default', [
 		, 'compass'
 		, 'scripts-modern'
 		, 'scripts-legacy'
-		, 'copy-modernizr'
+		, 'copy'
 		, 'copy-jquery-legacy'
-		, 'copy-rem-polyfil'
+		, 'copy-rem-polyfill'
 		, 'images'], function(){
 	(benchPackage) ? gulp.start(['publish']) : '';
 });

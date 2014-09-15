@@ -8,17 +8,17 @@
 		<title>Application</title>
 
 		<link rel="stylesheet" href="css/app.css" data-norem />
-		<!--[if IE 8]><link rel="stylesheet" href="css/ie8/app.css" data-norem /><![endif]-->
+		<!--[if IE 8]><link rel="stylesheet" href="css/ie8.css" data-norem /><![endif]-->
 
 		<script src="js/modernizr.min.js"></script>
-		<!--[if IE 8]><script src="js/legacy.js"></script><![endif]-->
+		<!--[if IE 8]><script src="js/legacy.min.js"></script><![endif]-->
 	</head>
 	<body>
 
 		<!--[if IE 8]>
 			<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 			<script>window.jQuery || document.write('<script src="js/vendor/jquery-legacy.min.js"><\/script>')</script>
-			<script src="js/ie8/rem.min.js"></script>
+			<script src="js/rem.min.js"></script>
 		<![endif]-->
 		<!--[if gt IE 8]><!-->
 			<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
