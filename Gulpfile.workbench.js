@@ -25,7 +25,7 @@ gulp.task('pixrem', function() {
 });
 
 gulp.task('scripts-modern', function() {
-	gulp.src([
+	return gulp.src([
 			'bower_components/jquery-placeholder/jquery.placeholder.js'
 			, 'bower_components/fastclick/lib/fastclick.js'
 			, 'bower_components/jquery.cookie/jquery.cookie.js'
@@ -44,16 +44,16 @@ gulp.task('scripts-modern', function() {
 });
 
 gulp.task('scripts-legacy', function() {
-	gulp.src([
-		'bower_components/html5shiv/dist/html5shiv.js'
-		, 'bower_components/es5-shim/es5-shim.js'
-		, 'js/ie8/nwmatcher-1.2.5-min.js'
-		, 'bower_componenets/selectivizr/selectivizr.js'
-		, 'bower_components/respond/dest/respond.min.js'
-	])
-	.pipe(plugins.concat('legacy.min.js', {newLine: ';'}))
-	.pipe(plugins.uglify())
-	.pipe(gulp.dest('../public/js'))
+	return gulp.src([
+			'bower_components/html5shiv/dist/html5shiv.js'
+			, 'bower_components/es5-shim/es5-shim.js'
+			, 'js/ie8/nwmatcher-1.2.5-min.js'
+			, 'bower_componenets/selectivizr/selectivizr.js'
+			, 'bower_components/respond/dest/respond.min.js'
+		])
+		.pipe(plugins.concat('legacy.min.js', {newLine: ';'}))
+		.pipe(plugins.uglify())
+		.pipe(gulp.dest('../public/js'))
 });
 
 gulp.task('copy', function(){
@@ -77,30 +77,67 @@ gulp.task('copy-rem-polyfill', function(){
 
 gulp.task('images', function() {
 	return gulp.src('images/**/*')
-		.pipe(plugins.cache(plugins.imagemin({ optimizationLevel: 5, progressive: true, interlaced: true }), { cacheDirName: 'image-cache' }))
+		.pipe(plugins.cache(plugins.imagemin({ optimizationLevel: 5, progressive: true, interlaced: true })))
 		.pipe(gulp.dest('../public/images'))
+});
+
+gulp.task('publish', plugins.shell.task([
+	'php ../../../../artisan asset:publish --bench="[vendor]/[package]"'
+]));
+
+gulp.task('watch-compass', function(cb) {
+	runSequence(
+		'compass'
+		,'publish'
+		,cb);
+});
+
+gulp.task('watch-scripts-modern', function(cb) {
+	runSequence(
+		'scripts-modern'
+		,'publish'
+		,cb);
+});
+
+gulp.task('watch-images', function(cb) {
+	runSequence(
+		'images'
+		,'publish'
+		,cb);
 });
 
 gulp.task('watch', function() {
 
 	// Watch .scss files
-	gulp.watch('scss/**/*.scss', ['sass']);
+	gulp.watch('scss/**/*.scss', ['watch-compass']);
 
 	// Watch public .css files (pixrem for IE8)
 	gulp.watch('../public/css/app.css', ['pixrem']);
 
 	// Watch .js files
-	gulp.watch('js/**/*.js', ['scripts-modern']);
+	gulp.watch('js/**/*.js', ['watch-scripts-modern']);
 
 	// Watch image files
-	gulp.watch('images/**/*', ['images']);
+	gulp.watch('images/**/*', ['watch-images']);
 
 });
 
 // Livereload
 gulp.task('livereload', function(){
 	plugins.livereload.listen();
-	gulp.watch('../public/**/*').on('change', plugins.livereload.changed);
+	gulp.watch('../../../../public/**/*').on('change', plugins.livereload.changed);
 });
 
-gulp.task('default', [ 'clean', 'watch', 'sass', 'scripts-modern', 'scripts-legacy', 'copy', 'copy-jquery-legacy', 'copy-rem-polyfill', 'images']);
+gulp.task('default', [
+		'watch'
+		, 'compass'
+		, 'scripts-modern'
+		, 'scripts-legacy'
+		, 'copy'
+		, 'copy-jquery-legacy'
+		, 'copy-rem-polyfill'
+		, 'images'], function(){
+	gulp.start(['publish']);
+});
+
+
