@@ -103,4 +103,6 @@ gulp.task('livereload', function(){
 	gulp.watch('../public/**/*').on('change', plugins.livereload.changed);
 });
 
-gulp.task('default', [ 'clean', 'watch', 'sass', 'scripts-modern', 'scripts-legacy', 'copy', 'copy-jquery-legacy', 'copy-rem-polyfill', 'images']);
+gulp.task('install', [ 'clean', 'sass', 'scripts-modern', 'scripts-legacy', 'copy', 'copy-jquery-legacy', 'copy-rem-polyfill', 'images']);
+
+gulp.task('default', [ 'watch', 'install']);
