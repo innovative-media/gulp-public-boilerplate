@@ -129,8 +129,9 @@ gulp.task('livereload', function(){
 });
 
 gulp.task('default', [
-		'watch'
-		, 'compass'
+		, 'clean'
+		, 'watch'
+		, 'sass'
 		, 'scripts-modern'
 		, 'scripts-legacy'
 		, 'copy'
