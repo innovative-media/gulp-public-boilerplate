@@ -125,7 +125,12 @@ gulp.task('watch', function() {
 // Livereload
 gulp.task('livereload', function(){
 	plugins.livereload.listen();
-	gulp.watch('../../../../public/**/*').on('change', plugins.livereload.changed);
+	gulp.watch([
+		'../public/css/**/*.css'
+		,'../public/js/**/*.js'
+		,'../public/images/**/*.*'
+		,'../app/views/www/**/*.*'
+	]).on('change', plugins.livereload.changed);
 });
 
 gulp.task('default', [
